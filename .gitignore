@@ -1,16 +1,6 @@
-# Python compiled files
-
 *.pyc
-
 __pycache__/
- 
-# Jupyter checkpoints
-
 .ipynb_checkpoints/
- 
-# OS files (optional)
-
 .DS_Store
- 
 .git 
 .gitignore

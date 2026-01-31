@@ -1,20 +1,33 @@
 import unittest
-from src.calculator import fun1, fun2, fun3, fun4
+from src.date_validator import is_valid_date, validate_date_range
 
-class TestCalculator(unittest.TestCase):
+class TestDateValidator(unittest.TestCase):
 
-    def test_fun1(self):
-        self.assertEqual(fun1(2, 3), 5)
+    def test_is_valid_date(self):
+        self.assertTrue(is_valid_date("2026-01-31"))
+        self.assertTrue(is_valid_date("31-01-2026", "%d-%m-%Y"))
+        self.assertFalse(is_valid_date("2026-02-30"))
+        self.assertFalse(is_valid_date("abc"))
 
-    def test_fun2(self):
-        self.assertEqual(fun2(5, 3), 2)
+    def test_validate_date_range_valid(self):
+        valid, msg = validate_date_range("2026-01-31", start_date="2026-01-01", end_date="2026-12-31")
+        self.assertTrue(valid)
+        self.assertEqual(msg, "")
 
-    def test_fun3(self):
-        self.assertEqual(fun3(4, 3), 12)
+    def test_validate_date_range_before(self):
+        valid, msg = validate_date_range("2025-12-31", start_date="2026-01-01", end_date="2026-12-31")
+        self.assertFalse(valid)
+        self.assertIn("before start date", msg)
 
-    def test_fun4(self):
-        self.assertEqual(fun4(2, 3), (2 + 3) + (2 - 3) + (2 * 3))
+    def test_validate_date_range_after(self):
+        valid, msg = validate_date_range("2027-01-01", start_date="2026-01-01", end_date="2026-12-31")
+        self.assertFalse(valid)
+        self.assertIn("after end date", msg)
 
+    def test_validate_date_range_invalid(self):
+        valid, msg = validate_date_range("2026-02-30", start_date="2026-01-01", end_date="2026-12-31")
+        self.assertFalse(valid)
+        self.assertIn("Invalid date format", msg)
 
 if __name__ == "__main__":
     unittest.main()

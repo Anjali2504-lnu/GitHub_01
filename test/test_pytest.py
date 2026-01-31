@@ -1,23 +1,25 @@
-from src.calculator import fun1, fun2, fun3, fun4
+import pytest
+from src.date_validator import is_valid_date, validate_date_range
 
-def test_fun1():
-    assert fun1(2, 3) == 5
+def test_is_valid_date():
+    assert is_valid_date("2026-01-31")
+    assert is_valid_date("31-01-2026", "%d-%m-%Y")
+    assert not is_valid_date("2026-02-30")
+    assert not is_valid_date("abc")
 
-def test_fun2():
-    assert fun2(5, 3) == 2
+def test_validate_date_range():
+    valid, msg = validate_date_range("2026-01-31", start_date="2026-01-01", end_date="2026-12-31")
+    assert valid
+    assert msg == ""
 
-def test_fun3():
-    assert fun3(4, 3) == 12
+    valid, msg = validate_date_range("2025-12-31", start_date="2026-01-01", end_date="2026-12-31")
+    assert not valid
+    assert "before start date" in msg
 
-def test_fun4():
-    assert fun4(2, 3) == (2 + 3) + (2 - 3) + (2 * 3)
+    valid, msg = validate_date_range("2027-01-01", start_date="2026-01-01", end_date="2026-12-31")
+    assert not valid
+    assert "after end date" in msg
 
-# Example of parametrized test (optional)
-# import pytest
-#
-# @pytest.mark.parametrize(
-#     "x, y, expected",
-#     [(1, 2, 3), (5, 5, 10), (-1, 1, 0)]
-# )
-# def test_fun1_param(x, y, expected):
-#     assert fun1(x, y) == expected
+    valid, msg = validate_date_range("2026-02-30", start_date="2026-01-01", end_date="2026-12-31")
+    assert not valid
+    assert "Invalid date format" in msg
